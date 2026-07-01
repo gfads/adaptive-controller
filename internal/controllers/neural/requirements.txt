@@ -1,0 +1,7 @@
+pandas
+numpy
+optuna
+scikit-learn
+scikit-optimize
+cma
+stable-baselines3

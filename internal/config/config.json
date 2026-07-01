@@ -1,0 +1,83 @@
+{
+  "environment": {
+    "_comment_about_controldir": "controldir=. in EC2",
+    "controldir": ".",
+    "goroot": "/usr/local/go"
+  },
+  "rabbitmq": {
+    "host": "98.91.240.8",
+    "port": 5672,
+    "user": "admin",
+    "pwd": "admin",
+    "queue-name": "queue",
+    "execution-env": "EC2"
+  },
+  "publisher": {
+    "host": "",
+    "execution-env": "Desktop"
+  },
+  "subscriber": {
+    "host": "",
+    "execution-env": "EC2"
+  },
+  "pid": {
+    "direction" : 1.0,
+    "kp":  0.00098,
+    "ki":  0.00028,
+    "kd": 0.0,
+    "max" : 100.0,
+    "min" : 1.0
+  },
+  "neural": {
+    "data-trained-file" : "data-trained.csv",
+    "data-trained-path" : ".",
+    "data-training-file" : "data-training.csv",
+    "data-training-path" : "."
+  },
+  "aimd": {
+    "min" : 1.0,
+    "max" : 100.0,
+    "hysteris-band": 100.0
+  },
+  "hpa": {
+    "direction": 1,
+    "min" : 1.0,
+    "max" : 100.0,
+    "pc": 1.0
+  },
+  "python": {
+    "script": "/app/adaptive-pid-other-options/examples/run_loop.py",
+    "path": ".",
+    "errorsFile":"errors-file.csv",
+    "gainsFile": "control-gains.csv",
+    "executable": "python3",
+    "mode": "optuna",
+    "dir": "",
+    "jitterOn": "1"
+  },
+  "experiment": {
+    "adaptive-window-size": 300,
+    "controller-type": "AdaptivePID",
+    "docker-data-dir": "/sub",
+    "docker-data-file": "ouput.csv",
+    "execution-type": "AdaptiveController",
+    "max-training-pc": 50,
+    "monitor-interval": 1,
+    "pc": 1,
+    "pc-step": 1,
+    "publish-interval": 1,
+    "publish-interval-std": 1,
+    "same-level-pc": 100,
+    "same-level-setpoint": 50,
+    "sample-size": 1000,
+    "setpoint": 5000.0,
+    "setpoints": [5000, 6000, 9000, 7500, 4000],
+    "queue-max-lenght": 100000,
+    "number-publishers": 30,
+    "inc-dec-publishers-step": 10,
+    "inc-dec-interval": 20,
+    "min-number-publishers": 10,
+    "publishers-type": "Fixed",
+    "use-environment-variables": 0
+  }
+}

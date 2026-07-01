@@ -1,0 +1,44 @@
+# Build stage
+#FROM golang:1.24.4 AS builder
+
+FROM golang:1.24.4-bookworm AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash python3 python3-pip python3-venv ca-certificates && \
+    ln -sf /usr/bin/python3 /usr/bin/python && \
+    ln -sf /usr/bin/pip3 /usr/bin/pip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* \
+
+# Verify installations (optional, good for debugging)
+RUN go version && python --version && pip --version
+
+WORKDIR /app
+
+# Copy go.mod and go.sum first for caching
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the whole project
+COPY . .
+
+# Build sub app
+RUN go build -o sub ./cmd/rabbitmq/sub
+
+# Runtime stage
+FROM gcr.io/distroless/base-debian12
+
+COPY --from=builder /app/sub /app/sub
+COPY --from=builder /app/internal/controllers/neural/data-trained.csv /app/data-trained.csv
+COPY --from=builder /app/internal/controllers/neural/adaptiveNN.py /app/adaptiveNN.py
+
+# Copy auxiliar files
+COPY ./internal/config/config.json /app
+COPY ./internal/controllers/neural/data-trained.csv /app
+
+WORKDIR /app
+
+ENV GOPATH=/go
+ENV PATH=$GOPATH/bin:/usr/local/go/bin:/usr/local/bin:$PATH
+ENV PYTHONPATH=/usr/lib/python3/dist-packages
+
+CMD ["./sub"]
